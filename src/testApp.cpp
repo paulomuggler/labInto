@@ -9,7 +9,6 @@ void testApp::setup()
     vidGrabber.initGrabber(320,240);
 
     loadSourceImg();
-    //configure_windows();
 
     colorImg.allocate(320,240);
     grayImage.allocate(320,240);
@@ -21,6 +20,7 @@ void testApp::setup()
     threshold = 80;
 
     setup_shader();
+    //configure_windows();
 }
 
 //--------------------------------------------------------------
@@ -55,8 +55,10 @@ void testApp::update()
 
         maskTargetImage();
 
-        srcImage.reloadTexture();
-        // HERE the shader-masking happends
+        grayDiff.getPixelsRef().resizeTo(maskImg.getPixelsRef(), OF_INTERPOLATE_BICUBIC);
+        maskImg.reloadTexture();
+
+        // HERE the shader-masking happens
         //
         ofEnableAlphaBlending();
         fbo.begin();
@@ -64,9 +66,8 @@ void testApp::update()
         ofClear(0, 0, 0, 0);
 
         shader.begin();
-        //shader.setUniformTexture("tex0", srcImage.getTextureReference(), 1 );
-        shader.setUniformTexture("maskTex", gryDiff.getTextureReference(), 1 );
 
+        shader.setUniformTexture("maskTex", maskImg.getTextureReference(), 1 );
         srcImage.draw(0,0);
 
         shader.end();
@@ -79,8 +80,9 @@ void testApp::update()
 //--------------------------------------------------------------
 void testApp::draw()
 {
-    tgt.reloadTexture();
+    //tgt.reloadTexture();
 
+    // copy a bunch of ofxCvImage types to ofImage ones because ofxCv and ofImage are not playing nice
     clr.setFromPixels(colorImg.getPixelsRef());
     gry.setFromPixels(grayImage.getPixelsRef());
     gryBg.setFromPixels(grayBg.getPixelsRef());
@@ -105,11 +107,10 @@ void testApp::draw()
               << ", fps: " << ofGetFrameRate();
     ofDrawBitmapString(reportStr.str(), 660, 20);
 
-
     ofSetColor(255,255);
 
-    srcImage.draw(740,0);
-    fbo.draw(740,0);
+    srcImage.draw(800,0);
+    fbo.draw(800,0);
 
 }
 
@@ -125,28 +126,30 @@ void testApp::drawImageOnGrid(ofImage img, string imgName, int row, int col, int
     ofDrawBitmapString(reportStr.str(), i*gW+2*i*pad, j*gH+2*(j+1)*pad);
 }
 
+ofImage src;
 // masks an image with a grayscale image
-ofxCvGrayscaleImage maskImg;
 void testApp::maskTargetImage()
 {
 
-    grayDiff.blurGaussian(33);
+    if(!src.bAllocated()){
+        src.allocate(320,240, OF_IMAGE_COLOR);
+    }
 
-    tgt.setFromPixels(srcImage.getPixelsRef());
+    //grayDiff.blurGaussian(33);
 
-    maskImg = grayDiff;
-    //maskImg.setFromPixels(grayDiff.getPixels(), grayDiff.width, grayDiff.height);
-    //maskImg.resize(srcImgW, srcImgH);
-    //maskImg.blurGaussian(3);
+    srcImage.getPixelsRef().resizeTo(src.getPixelsRef(), OF_INTERPOLATE_NEAREST_NEIGHBOR);
 
-    unsigned char * maskPixels = maskImg.getPixels();
-    unsigned char * srcPixels = srcImage.getPixels();
+    tgt.setFromPixels(src.getPixelsRef());
+
+    unsigned char * maskPixels = grayDiff.getPixels();
+    unsigned char * srcPixels = src.getPixels();
     unsigned char * destPixels = tgt.getPixels();
 
     int bpp = tgt.bpp / 8; //ofImage
     //int bpp = 3; //ofxCvColorImage
 
-    int w = srcImgW, h = srcImgH;
+    int w = src.getWidth(), h = src.getHeight();
+
 
     for (int i = 0; i < w; i++)
     {
@@ -249,7 +252,6 @@ void testApp::load_files()
     ofLogNotice("source files found at "+sourcesPath+":");
     ofLogNotice(ofToString(sourcesDir.numFiles()));
 
-    //mTargetImage.loadImage(sourcesDir.getPath(fcursor));
     // done with file & image loading
 }
 
@@ -258,9 +260,9 @@ void testApp::loadSourceImg()
     unsigned int f = fcursor%sourcesDir.numFiles();
     cout << "loading source image " << f << ": " << sourcesDir.getPath(f) << endl;
     srcImage.loadImage(sourcesDir.getPath(f));
-    srcImage.resize(320,240);
     srcImgW = srcImage.width;
     srcImgH = srcImage.height;
+    maskImg.allocate(srcImgW, srcImgH, OF_IMAGE_GRAYSCALE);
 }
 
 //--------------------------------------------------------------

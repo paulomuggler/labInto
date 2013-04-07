@@ -60,6 +60,8 @@ public:
     ofxCvGrayscaleImage 	grayBg;
     ofxCvGrayscaleImage 	grayDiff;
 
+    ofImage maskImg;
+
     // ofImage types for displaying since ofxFenster is not playing nice with ofxCvImage
     ofImage clr, gry, gryBg, gryDiff, tgt;
 
