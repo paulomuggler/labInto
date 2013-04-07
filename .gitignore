@@ -1,4 +1,5 @@
 make-run.sh
+*.layout
 *.cbp
 bin/libs/
 bin/labInto
