@@ -55,6 +55,7 @@ public:
     ofxCvGrayscaleImage 	grayImage;
     ofxCvGrayscaleImage 	grayBg;
     ofxCvGrayscaleImage 	grayDiff;
+    ofImage maskImg; // this will be the same size as srcImage
 
     // ofImage types for displaying since ofxFenster is not playing nice with ofxCvImage
     ofImage clr, gry, gryBg, gryDiff, tgt;
@@ -67,7 +68,7 @@ public:
 private:
     // helpers
     void configure_windows();
-    void load_files();
+    void load_source_files();
     void loadSourceImg();
     void drawImageOnGrid(ofImage img, string imgName, int i, int j, int gW, int gH, int pad);
     bool sourceImgChanged = false;
