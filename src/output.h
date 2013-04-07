@@ -22,13 +22,8 @@ public:
         //   ((testApp*)ofGetAppPtr())->keyPressed(key);
     }
 
-    // display pipeline variables
-    ofFbo       fbo;
-    ofShader    shader;
-
 private:
     // helpers
-    void setup_shader();
 
 
 };
