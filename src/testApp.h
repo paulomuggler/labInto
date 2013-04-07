@@ -49,6 +49,10 @@ public:
     // display parameters
     int srcImgW, srcImgH;
 
+    // display pipeline variables
+    ofFbo       fbo;
+    ofShader    shader;
+
     // ofxOpenCv image types for processing
     ofxCvColorImage			colorImg;
 
@@ -59,13 +63,13 @@ public:
     // ofImage types for displaying since ofxFenster is not playing nice with ofxCvImage
     ofImage clr, gry, gryBg, gryDiff, tgt;
 
-
     // this window displays only the final image
     outputWindow* ow;
 
 
 private:
     // helpers
+    void setup_shader();
     void configure_windows();
     void load_files();
     void loadSourceImg();
