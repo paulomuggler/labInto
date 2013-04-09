@@ -4,7 +4,7 @@
 void testApp::setup()
 {
 
-    load_files();
+    load_source_files();
     vidGrabber.setVerbose(true);
     vidGrabber.initGrabber(320,240);
 
@@ -58,7 +58,6 @@ void testApp::update()
 //--------------------------------------------------------------
 void testApp::draw()
 {
-    tgt.reloadTexture();
 
     clr.setFromPixels(colorImg.getPixelsRef());
     gry.setFromPixels(grayImage.getPixelsRef());
@@ -98,7 +97,6 @@ void testApp::drawImageOnGrid(ofImage img, string imgName, int row, int col, int
 }
 
 // masks an image with a grayscale image
-ofxCvGrayscaleImage maskImg;
 void testApp::maskTargetImage()
 {
 
@@ -106,8 +104,8 @@ void testApp::maskTargetImage()
 
     tgt.setFromPixels(srcImage.getPixelsRef());
 
-    maskImg.setFromPixels(grayDiff.getPixels(), grayDiff.width, grayDiff.height);
-    maskImg.resize(srcImgW, srcImgH);
+    grayDiff.getPixelsRef().resizeTo(maskImg.getPixelsRef(), OF_INTERPOLATE_NEAREST_NEIGHBOR);
+    maskImg.reloadTexture();
     //maskImg.blurGaussian(3);
 
     unsigned char * maskPixels = maskImg.getPixels();
@@ -126,7 +124,7 @@ void testApp::maskTargetImage()
 
             int maskPixel = maskPixels[i+(j*w)];
             float mAlpha = ofMap(maskPixel, 0, 255, 1.0, 0);
-            //float mAlpha = abs(log(ofMap(maskPixel, 0, 255, 0, 1.0)));
+            //float mAlpha = abs(log(ofMap(maskPixel, 0, 255, 0, 1.0))); // try out different interpolation curves
 
             // code for ofImage pixel access
 
@@ -167,7 +165,7 @@ void testApp::configure_windows()
     // FINISH WINDOW SETUP
 }
 
-void testApp::load_files()
+void testApp::load_source_files()
 {
     //populate the sources directory object
     sourcesDir.open(sourcesPath);
@@ -175,8 +173,6 @@ void testApp::load_files()
 
     ofLogNotice("source files found at "+sourcesPath+":");
     ofLogNotice(ofToString(sourcesDir.numFiles()));
-
-    //mTargetImage.loadImage(sourcesDir.getPath(fcursor));
     // done with file & image loading
 }
 
@@ -185,9 +181,10 @@ void testApp::loadSourceImg()
     unsigned int f = fcursor%sourcesDir.numFiles();
     cout << "loading source image " << f << ": " << sourcesDir.getPath(f) << endl;
     srcImage.loadImage(sourcesDir.getPath(f));
-    //srcImage.resize(320,240);
     srcImgW = srcImage.width;
     srcImgH = srcImage.height;
+    maskImg.clear();
+    maskImg.allocate(srcImgW, srcImgH, OF_IMAGE_GRAYSCALE);
 }
 
 //--------------------------------------------------------------
