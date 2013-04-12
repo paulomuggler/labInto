@@ -56,7 +56,7 @@ void testApp::update()
         grayDiff.blur(21);
         //grayDiff.threshold(threshold);
         IplImage* cvImage = grayDiff.getCvImage();
-        cvThreshold(cvImage, cvImage, threshold, 0, CV_THRESH_TOZERO);
+        //cvThreshold(cvImage, cvImage, threshold, 0, CV_THRESH_TOZERO);
         cvErode(cvImage, cvImage, NULL, 1);
         cvDilate(cvImage, cvImage, NULL, 1);
         //grayDiff.contrastStretch();
@@ -85,7 +85,7 @@ void testApp::draw()
     drawImageOnGrid(clr, "color image", 0, 0, gW, gH, pad);
     drawImageOnGrid(gry, "grayscale image", 0, 1, gW, gH, pad);
     drawImageOnGrid(gryBg, "background image", 1, 0, gW, gH, pad);
-    drawImageOnGrid(gryDiff, "grayscale image minus background\n(diff & threshold)", 1, 1, gW, gH, pad);
+    drawImageOnGrid(gryDiff, "alpha mask image", 1, 1, gW, gH, pad);
     drawImageOnGrid(srcImage, "source image", 2, 0, gW, gH, pad);
 
     ofEnableAlphaBlending();
@@ -126,16 +126,11 @@ void testApp::drawImageOnGrid(ofImage img, string imgName, int row, int col, int
 void testApp::maskTargetImage()
 {
 
-    //grayDiff.blurGaussian(33);
-
     tgt.setFromPixels(srcImage.getPixelsRef());
-    //tgt.loadData(srcImage.getPixels(), srcImgW, srcImgH, GL_RGBA);
     tgt.setImageType(OF_IMAGE_COLOR_ALPHA);
-    tgt.reloadTexture();
 
     grayDiff.getPixelsRef().resizeTo(maskImg.getPixelsRef(), OF_INTERPOLATE_BICUBIC);
     maskImg.reloadTexture();
-    //maskImg.blurGaussian(3);
 
     unsigned char * maskPixels = maskImg.getPixels();
     unsigned char * srcPixels = srcImage.getPixels();
