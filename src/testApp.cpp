@@ -6,10 +6,9 @@ void testApp::setup()
 {
 
     load_source_files();
+
     vidGrabber.setVerbose(true);
-    //vidGrabber.setPixelFormat(OF_PIXELS_MONO);
     vidGrabber.setPixelFormat(OF_PIXELS_RGB);
-    //vidGrabber.setUseTexture(true);
     vidGrabber.setDesiredFrameRate(50);
     vidGrabber.initGrabber(320,240);
 
@@ -74,18 +73,13 @@ void testApp::update()
 void testApp::draw()
 {
 
-    clr.setFromPixels(colorImg.getPixelsRef());
-    gry.setFromPixels(grayImage.getPixelsRef());
-    gryBg.setFromPixels(grayBg.getPixelsRef());
-    gryDiff.setFromPixels(grayDiff.getPixelsRef());
-
     // draw the incoming, the grayscale, the bg and the thresholded difference
     int gW = 320, gH = 240, pad = 10;
 
-    drawImageOnGrid(clr, "color image", 0, 0, gW, gH, pad);
-    drawImageOnGrid(gry, "grayscale image", 0, 1, gW, gH, pad);
-    drawImageOnGrid(gryBg, "background image", 1, 0, gW, gH, pad);
-    drawImageOnGrid(gryDiff, "alpha mask image", 1, 1, gW, gH, pad);
+    drawImageOnGrid(colorImg, "color image", 0, 0, gW, gH, pad);
+    drawImageOnGrid(grayImage, "grayscale image", 0, 1, gW, gH, pad);
+    drawImageOnGrid(grayBg, "background image", 1, 0, gW, gH, pad);
+    drawImageOnGrid(grayDiff, "alpha mask image", 1, 1, gW, gH, pad);
     drawImageOnGrid(srcImage, "source image", 2, 0, gW, gH, pad);
 
     ofEnableAlphaBlending();
@@ -111,7 +105,9 @@ void testApp::draw()
 
 }
 
-void testApp::drawImageOnGrid(ofImage img, string imgName, int row, int col, int gW, int gH, int pad){
+
+template <class T>
+void testApp::drawImageOnGrid(T img, string imgName, int row, int col, int gW, int gH, int pad){
     int i = col, j = row;
     ofSetHexColor(0xffffff);
     img.draw(i*gW+i*pad, j*gH+j*pad, gW, gH);
