@@ -1,4 +1,5 @@
 #include "testApp.h"
+#include "proc_info.h"
 
 //--------------------------------------------------------------
 void testApp::setup()
@@ -95,12 +96,17 @@ void testApp::draw()
     ofDisableAlphaBlending();
 
     // finally, a report:
+
+    double vm, rss;
+    process_mem_usage(vm, rss);
+
     ofSetHexColor(0xffffff);
     stringstream reportStr;
     reportStr << "bg subtraction and blob detection" << endl
               << "press ' ' to capture bg" << endl
               << "threshold " << threshold << " (press: +/-)" << endl
-              << ", fps: " << ofGetFrameRate();
+              << ", fps: " << ofGetFrameRate() << endl
+              << "VM: " << vm << "; RSS: " << rss << endl;
     ofDrawBitmapString(reportStr.str(), 660, 20);
 
 }
@@ -147,16 +153,8 @@ void testApp::maskTargetImage()
         {
 
             int maskPixel = maskPixels[i+(j*w)];
-            //float mAlpha = ofMap(maskPixel, 0, 255, 1.0, 0);
-            //float mAlpha = abs(log(ofMap(maskPixel, 0, 255, 0, 1.0))); // try out different interpolation curves
 
-            // code for ofImage pixel access
-
-            //destPixels[(j*w+i)*bpp+0] = mAlpha*maskPixel + (1-mAlpha)*srcPixels[(j*w+i)*bpp+0];
-            //destPixels[(j*w+i)*bpp+1] = mAlpha*maskPixel + (1-mAlpha)*srcPixels[(j*w+i)*bpp+1];
-            //destPixels[(j*w+i)*bpp+2] = mAlpha*maskPixel + (1-mAlpha)*srcPixels[(j*w+i)*bpp+2];
             destPixels[(j*w+i)*bpp+3] = maskPixel;
-            //cout << "..." << endl;
         }
     }
 }
