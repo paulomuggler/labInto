@@ -15,7 +15,9 @@ void outputWindow::draw(ofxFenster* f) {
     ofBackground(0);
     ofImage* t = &(((testApp*)ofGetAppPtr())->tgt);
     t->reloadTexture();
+    ofEnableAlphaBlending();
     t->draw(0,0, f->getWidth(), f->getHeight());
+    ofDisableAlphaBlending();
 }
 
 

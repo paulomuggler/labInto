@@ -6,6 +6,10 @@ void testApp::setup()
 
     load_source_files();
     vidGrabber.setVerbose(true);
+    //vidGrabber.setPixelFormat(OF_PIXELS_MONO);
+    vidGrabber.setPixelFormat(OF_PIXELS_RGB);
+    //vidGrabber.setUseTexture(true);
+    vidGrabber.setDesiredFrameRate(50);
     vidGrabber.initGrabber(320,240);
 
     loadSourceImg();
@@ -17,7 +21,7 @@ void testApp::setup()
     grayDiff.allocate(320,240);
 
     bLearnBakground = true;
-    threshold = 80;
+    threshold = 0;
 }
 
 //--------------------------------------------------------------
@@ -48,7 +52,17 @@ void testApp::update()
 
         // take the abs value of the difference between background and incoming and then threshold:
         grayDiff.absDiff(grayBg, grayImage);
-        grayDiff.threshold(threshold);
+        grayDiff.blur(21);
+        //grayDiff.threshold(threshold);
+        IplImage* cvImage = grayDiff.getCvImage();
+        cvThreshold(cvImage, cvImage, threshold, 0, CV_THRESH_TOZERO);
+        cvErode(cvImage, cvImage, NULL, 1);
+        cvDilate(cvImage, cvImage, NULL, 1);
+        //grayDiff.contrastStretch();
+        //grayDiff.dilate_3x3();
+        //grayDiff.erode_3x3();
+        //grayDiff.blurGaussian(33);
+        //grayDiff.adaptiveThreshold(threshold, 0 ,false, true);
 
         maskTargetImage();
 
@@ -72,7 +86,13 @@ void testApp::draw()
     drawImageOnGrid(gryBg, "background image", 1, 0, gW, gH, pad);
     drawImageOnGrid(gryDiff, "grayscale image minus background\n(diff & threshold)", 1, 1, gW, gH, pad);
     drawImageOnGrid(srcImage, "source image", 2, 0, gW, gH, pad);
+
+    ofEnableAlphaBlending();
+    ofSetColor(0);
+    ofRect(1*(gW+pad), 2*(gH+pad), gW, gH);
+    ofSetColor(255);
     drawImageOnGrid(tgt, "output image", 2, 1, gW, gH, pad);
+    ofDisableAlphaBlending();
 
     // finally, a report:
     ofSetHexColor(0xffffff);
@@ -100,11 +120,14 @@ void testApp::drawImageOnGrid(ofImage img, string imgName, int row, int col, int
 void testApp::maskTargetImage()
 {
 
-    grayDiff.blurGaussian(33);
+    //grayDiff.blurGaussian(33);
 
     tgt.setFromPixels(srcImage.getPixelsRef());
+    //tgt.loadData(srcImage.getPixels(), srcImgW, srcImgH, GL_RGBA);
+    tgt.setImageType(OF_IMAGE_COLOR_ALPHA);
+    tgt.reloadTexture();
 
-    grayDiff.getPixelsRef().resizeTo(maskImg.getPixelsRef(), OF_INTERPOLATE_NEAREST_NEIGHBOR);
+    grayDiff.getPixelsRef().resizeTo(maskImg.getPixelsRef(), OF_INTERPOLATE_BICUBIC);
     maskImg.reloadTexture();
     //maskImg.blurGaussian(3);
 
@@ -115,7 +138,8 @@ void testApp::maskTargetImage()
     int bpp = tgt.bpp / 8; //ofImage
     //int bpp = 3; //ofxCvColorImage
 
-    int w = srcImgW, h = srcImgH;
+    //int w = srcImgW, h = srcImgH;
+    int w = tgt.getWidth(), h = tgt.getHeight();
 
     for (int i = 0; i < w; i++)
     {
@@ -123,14 +147,16 @@ void testApp::maskTargetImage()
         {
 
             int maskPixel = maskPixels[i+(j*w)];
-            float mAlpha = ofMap(maskPixel, 0, 255, 1.0, 0);
+            //float mAlpha = ofMap(maskPixel, 0, 255, 1.0, 0);
             //float mAlpha = abs(log(ofMap(maskPixel, 0, 255, 0, 1.0))); // try out different interpolation curves
 
             // code for ofImage pixel access
 
-            destPixels[(j*w+i)*bpp+0] = mAlpha*maskPixel + (1-mAlpha)*srcPixels[(j*w+i)*bpp+0];
-            destPixels[(j*w+i)*bpp+1] = mAlpha*maskPixel + (1-mAlpha)*srcPixels[(j*w+i)*bpp+1];
-            destPixels[(j*w+i)*bpp+2] = mAlpha*maskPixel + (1-mAlpha)*srcPixels[(j*w+i)*bpp+2];
+            //destPixels[(j*w+i)*bpp+0] = mAlpha*maskPixel + (1-mAlpha)*srcPixels[(j*w+i)*bpp+0];
+            //destPixels[(j*w+i)*bpp+1] = mAlpha*maskPixel + (1-mAlpha)*srcPixels[(j*w+i)*bpp+1];
+            //destPixels[(j*w+i)*bpp+2] = mAlpha*maskPixel + (1-mAlpha)*srcPixels[(j*w+i)*bpp+2];
+            destPixels[(j*w+i)*bpp+3] = maskPixel;
+            //cout << "..." << endl;
         }
     }
 }
@@ -181,10 +207,14 @@ void testApp::loadSourceImg()
     unsigned int f = fcursor%sourcesDir.numFiles();
     cout << "loading source image " << f << ": " << sourcesDir.getPath(f) << endl;
     srcImage.loadImage(sourcesDir.getPath(f));
+    srcImage.setImageType(OF_IMAGE_COLOR_ALPHA);
     srcImgW = srcImage.width;
     srcImgH = srcImage.height;
+    cout << "resolution: " << srcImgW << "x" << srcImgW << endl;
     maskImg.clear();
     maskImg.allocate(srcImgW, srcImgH, OF_IMAGE_GRAYSCALE);
+    tgt.clear();
+    tgt.allocate(srcImgW, srcImgH, OF_IMAGE_COLOR_ALPHA);
 }
 
 //--------------------------------------------------------------
