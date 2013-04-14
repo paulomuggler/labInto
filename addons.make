@@ -1,3 +1,4 @@
 ofxOpenCv
 ofxCv
 ofxFenster
+ofxUI

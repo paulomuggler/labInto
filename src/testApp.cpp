@@ -4,13 +4,20 @@
 //--------------------------------------------------------------
 void testApp::setup()
 {
+    scanDevices();
 
     load_source_files();
 
-    vidGrabber.setVerbose(true);
-    vidGrabber.setPixelFormat(OF_PIXELS_RGB);
-    vidGrabber.setDesiredFrameRate(50);
-    vidGrabber.initGrabber(320,240);
+//    vidGrabber.setVerbose(true);
+//    vidGrabber.setPixelFormat(OF_PIXELS_RGB);
+//    vidGrabber.setDesiredFrameRate(50);
+//    vidGrabber.initGrabber(320,240);
+
+    cout << capturesAvailable.size() << " captures available." << endl;
+    GrabberDevice gd = capturesAvailable.back();
+    cout << "selecting device " << gd.name << endl;
+    gd.device->setup();
+    vidGrabber = (gd.device->vidGrabber);
 
     loadSourceImg();
     configure_windows();
@@ -234,50 +241,22 @@ void testApp::keyPressed(int key)
     }
 }
 
-//--------------------------------------------------------------
-void testApp::keyReleased(int key)
-{
+void testApp::scanDevices(){
+    int i = 0,  deviceID = 0;;
+    do{
+        ofGstVideoGrabber& g = *(new ofGstVideoGrabber);
+        g.setDeviceID(i);
+        deviceID = g.deviceID;
+        ofVideoGrabber& vg = *(new ofVideoGrabber);
+        vg.setGrabber(ofPtr<ofGstVideoGrabber>(&g));
+        GrabberDevice fb(deviceID, g.camData.webcam_devices[deviceID].product_name, new Capture(vg));
+        capturesAvailable.push_back(fb);
+    }while(i++ <= deviceID);
 
-}
-
-//--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y )
-{
-
-}
-
-//--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button)
-{
-
-}
-
-//--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button)
-{
-
-}
-
-//--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button)
-{
-
-}
-
-//--------------------------------------------------------------
-void testApp::windowResized(int w, int h)
-{
-
-}
-
-//--------------------------------------------------------------
-void testApp::gotMessage(ofMessage msg)
-{
-
-}
-
-//--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo)
-{
+    // last device is a duplicate, deallocate it
+    GrabberDevice fb = capturesAvailable.back();
+    delete &(fb.device->vidGrabber);
+    delete fb.device;
+    capturesAvailable.pop_back();
 
 }

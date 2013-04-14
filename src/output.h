@@ -2,8 +2,6 @@
 
 #include "ofMain.h"
 #include "ofxFensterManager.h"
-#include "ofxOpenCv.h"
-#include "ofxCv.h"
 
 class outputWindow: public ofxFensterListener
 {
