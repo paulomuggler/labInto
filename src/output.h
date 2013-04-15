@@ -2,28 +2,26 @@
 
 #include "ofMain.h"
 #include "ofxFensterManager.h"
-#include "ofxOpenCv.h"
-#include "ofxCv.h"
+#include "layer.h"
 
 class outputWindow: public ofxFensterListener
 {
 
 public:
-    outputWindow();
+    outputWindow(Layer* lyr);
     ~outputWindow();
 
-    void setup(ofxFenster* f);
-    void update(ofxFenster* f);
+    void setup();
+    void update();
     void draw(ofxFenster* f);
+
+    Layer* outLayer;
+    ofTexture out;
 
     void keyReleased(int key, ofxFenster* window)
     {
         cout << "key pressed: " << key << endl;
-        //   ((testApp*)ofGetAppPtr())->keyPressed(key);
+     //   ((testApp*)ofGetAppPtr())->keyPressed(key);
     }
-
-private:
-    // helpers
-
 
 };

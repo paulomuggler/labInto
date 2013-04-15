@@ -1,6 +1,7 @@
 make-run.sh
 *.layout
 *.cbp
+bin/data/sources/*.jpg
 bin/libs/
 bin/labInto
 obj/

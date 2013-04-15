@@ -5,8 +5,9 @@
 #include "ofxFensterManager.h"
 
 #include "output.h"
-
-//#define _USE_LIVE_VIDEO
+#include "capture.h"
+#include "source.h"
+#include "layer.h"
 
 class testApp : public ofBaseApp
 {
@@ -20,63 +21,38 @@ public:
 
     // UI methods
     void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y );
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
-
-    void maskTargetImage();
-
 
     // video capture
-    ofVideoGrabber 		vidGrabber;
-    bool bNewFrame = false;
+    Capture* capture;
 
     // source image files
     unsigned int fcursor = UINT_MAX/2;
     string sourcesPath = "sources";
     ofDirectory sourcesDir;
-    ofImage			srcImage;
 
-    // image processing parameters
-    int 				threshold;
-    bool				bLearnBakground;
-
-    // display parameters
+    // source
+    Source*			srcImage;
     int srcImgW, srcImgH;
-
-    // display pipeline variables
-    ofFbo       fbo;
-    ofShader    shader;
-
-    // ofxOpenCv image types for processing
-    ofxCvColorImage			colorImg;
-
-    ofxCvGrayscaleImage 	grayImage;
-    ofxCvGrayscaleImage 	grayBg;
-    ofxCvGrayscaleImage 	grayDiff;
 
     ofImage maskImg;
 
-    // ofImage types for displaying since ofxFenster is not playing nice with ofxCvImage
-    ofImage clr, gry, gryBg, gryDiff, tgt;
-
     // this window displays only the final image
+    Layer* out;
     outputWindow* ow;
+
+    vector<Capture*> capturesAvailable;
+    vector<Capture*> capturesActive;
 
 
 private:
     // helpers
-    void setup_shader();
     void configure_windows();
-    void load_files();
+    void load_source_files();
     void loadSourceImg();
-    void drawImageOnGrid(ofImage img, string imgName, int i, int j, int gW, int gH, int pad);
+    template <class T>
+    void drawImageOnGrid(T img, string imgName, int i, int j, int gW, int gH, int pad);
     bool sourceImgChanged = false;
+    void scanDevices();
 
 };
 
