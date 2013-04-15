@@ -10,11 +10,20 @@ Capture::~Capture(){}
 
 void Capture::setup(){
 
+    capW = 320;
+    capH = 240;
+    framerate = 30;
+
     vidGrabber.setVerbose(true);
     vidGrabber.setPixelFormat(OF_PIXELS_RGB);
     //vidGrabber.setPixelFormat(OF_PIXELS_MONO);
-    vidGrabber.setDesiredFrameRate(50);
-    vidGrabber.initGrabber(320,240);
+    vidGrabber.setDesiredFrameRate(framerate);
+    vidGrabber.initGrabber(capW,capH);
+
+    colorImg.allocate(capW, capH);
+    grayImage.allocate(capW, capH);
+    grayBg.allocate(capW, capH);
+    grayDiff.allocate(capW, capH);
 
 }
 
@@ -25,7 +34,7 @@ void Capture::update(){
 
     if (bNewFrame){
 
-        colorImg.setFromPixels(vidGrabber.getPixels(), 320,240);
+        colorImg.setFromPixels(vidGrabber.getPixels(), capW,capH);
 
         grayImage = colorImg;
 
@@ -56,5 +65,6 @@ void Capture::learnBackground(){
 }
 
 void Capture::getAlphaMask(ofPixels* dst){
-    grayDiff.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_BICUBIC);
+    //grayDiff.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_BICUBIC);
+    grayDiff.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_NEAREST_NEIGHBOR);
 }

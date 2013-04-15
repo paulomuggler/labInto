@@ -6,6 +6,8 @@
 
 #include "output.h"
 #include "capture.h"
+#include "source.h"
+#include "layer.h"
 
 class testApp : public ofBaseApp
 {
@@ -27,18 +29,19 @@ public:
     unsigned int fcursor = UINT_MAX/2;
     string sourcesPath = "sources";
     ofDirectory sourcesDir;
-    ofImage			srcImage;
 
     // image processing parameters
     int 				threshold;
     bool				bLearnBakground;
 
     // display parameters
+    Source*			srcImage;
     int srcImgW, srcImgH;
 
     ofImage maskImg, tgt;
 
     // this window displays only the final image
+    Layer* out;
     outputWindow* ow;
 
     vector<Capture*> capturesAvailable;
@@ -53,7 +56,6 @@ private:
     template <class T>
     void drawImageOnGrid(T img, string imgName, int i, int j, int gW, int gH, int pad);
     bool sourceImgChanged = false;
-    void maskTargetImage();
     void scanDevices();
 
 };

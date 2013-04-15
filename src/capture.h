@@ -15,6 +15,9 @@ class Capture
         bool bNewFrame = false;
         bool bLearnBakground = true;
 
+        //
+        int capW, capH, framerate;
+
         // ofxOpenCv image types for storing intermediate representations (useful for monitoring, etc.)
         ofxCvColorImage			colorImg;
         ofxCvGrayscaleImage 	grayImage;

@@ -2,16 +2,21 @@
 
 #include "ofMain.h"
 #include "ofxFensterManager.h"
+#include "layer.h"
 
 class outputWindow: public ofxFensterListener
 {
 
 public:
-    outputWindow();
+    outputWindow(Layer* lyr);
     ~outputWindow();
 
     void setup();
+    void update();
     void draw(ofxFenster* f);
+
+    Layer* outLayer;
+    ofTexture out;
 
     void keyReleased(int key, ofxFenster* window)
     {
