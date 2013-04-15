@@ -8,9 +8,9 @@ void testApp::setup()
 
     scanDevices();
     cout << capturesAvailable.size() << " captures available." << endl;
-    capture = capturesAvailable.back();
-    cout << "selecting device " << capture.name << endl;
-    capture.device->setup();
+    capture = (capturesAvailable.back());
+    cout << "selecting device " << capture->name << endl;
+    capture->setup();
 
     loadSourceImg();
     configure_windows();
@@ -22,9 +22,8 @@ void testApp::setup()
 void testApp::update()
 {
     ofBackground(100,100,100);
-
-    capture.device->update();
-    bool bNewFrame = capture.device->vidGrabber.isFrameNew();
+    capture->update();
+    bool bNewFrame = capture->vidGrabber.isFrameNew();
 
     if (bNewFrame)
     {
@@ -43,14 +42,13 @@ void testApp::update()
 void testApp::draw()
 {
 
-    Capture cap = *(capture.device);
     // draw the incoming, the grayscale, the bg and the thresholded difference
     int gW = 320, gH = 240, pad = 10;
 
-    drawImageOnGrid(cap.colorImg, "color image", 0, 0, gW, gH, pad);
-    drawImageOnGrid(cap.grayImage, "grayscale image", 0, 1, gW, gH, pad);
-    drawImageOnGrid(cap.grayBg, "background image", 1, 0, gW, gH, pad);
-    drawImageOnGrid(cap.grayDiff, "alpha mask image", 1, 1, gW, gH, pad);
+    drawImageOnGrid(capture->colorImg, "color image", 0, 0, gW, gH, pad);
+    drawImageOnGrid(capture->grayImage, "grayscale image", 0, 1, gW, gH, pad);
+    drawImageOnGrid(capture->grayBg, "background image", 1, 0, gW, gH, pad);
+    drawImageOnGrid(capture->grayDiff, "alpha mask image", 1, 1, gW, gH, pad);
     drawImageOnGrid(srcImage, "source image", 2, 0, gW, gH, pad);
 
     ofEnableAlphaBlending();
@@ -96,7 +94,7 @@ void testApp::maskTargetImage()
     tgt.setFromPixels(srcImage.getPixelsRef());
     tgt.setImageType(OF_IMAGE_COLOR_ALPHA);
 
-    capture.device->getAlphaMask(&(maskImg.getPixelsRef()));
+    capture->getAlphaMask(&(maskImg.getPixelsRef()));
     maskImg.reloadTexture();
 
     unsigned char * maskPixels = maskImg.getPixels();
@@ -183,7 +181,7 @@ void testApp::keyPressed(int key)
     switch (key)
     {
     case ' ':
-        capture.device->learnBackground();
+        capture->learnBackground();
         break;
     case '+':
         threshold ++;
@@ -207,19 +205,19 @@ void testApp::keyPressed(int key)
 void testApp::scanDevices(){
     int i = 0,  deviceID = 0;;
     do{
-        ofGstVideoGrabber& g = *(new ofGstVideoGrabber);
-        g.setDeviceID(i);
-        deviceID = g.deviceID;
-        ofVideoGrabber& vg = *(new ofVideoGrabber);
-        vg.setGrabber(ofPtr<ofGstVideoGrabber>(&g));
-        GrabberDevice fb(deviceID, g.camData.webcam_devices[deviceID].product_name, new Capture(vg));
-        capturesAvailable.push_back(fb);
+        ofGstVideoGrabber* g = new ofGstVideoGrabber;
+        g->setDeviceID(i);
+        deviceID = g->deviceID;
+        ofVideoGrabber* vg = (new ofVideoGrabber);
+        vg->setGrabber(ofPtr<ofGstVideoGrabber>(g));
+        Capture* c = new Capture(deviceID, g->camData.webcam_devices[deviceID].product_name, *vg);
+        capturesAvailable.push_back(c);
     }while(i++ <= deviceID);
 
     // last device is a duplicate, deallocate it
-    GrabberDevice fb = capturesAvailable.back();
+    Capture* c = capturesAvailable.back();
     capturesAvailable.pop_back();
-    delete &(fb.device->vidGrabber);
-    delete fb.device;
+    //delete &(c->vidGrabber);
+    //delete c;
 
 }

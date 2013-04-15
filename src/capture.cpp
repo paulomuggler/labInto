@@ -1,11 +1,12 @@
 #include "capture.h"
 
-Capture::Capture(ofVideoGrabber& g):vidGrabber(g){}
+Capture::Capture(int deviceID, string deviceName, ofVideoGrabber& g)
+                :id(deviceID),
+                name(deviceName),
+                vidGrabber(g)
+{}
 
-Capture::~Capture()
-{
-    //dtor
-}
+Capture::~Capture(){}
 
 void Capture::setup(){
 

@@ -21,7 +21,7 @@ public:
     void keyPressed(int key);
 
     // video capture
-    GrabberDevice capture;
+    Capture* capture;
 
     // source image files
     unsigned int fcursor = UINT_MAX/2;
@@ -41,8 +41,8 @@ public:
     // this window displays only the final image
     outputWindow* ow;
 
-    vector<GrabberDevice> capturesAvailable;
-    vector<GrabberDevice> capturesActive;
+    vector<Capture*> capturesAvailable;
+    vector<Capture*> capturesActive;
 
 
 private:

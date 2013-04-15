@@ -9,6 +9,8 @@
 class Capture
 {
     public:
+        unsigned int id; // the device id
+        string name; // the device name string
         ofVideoGrabber& 		vidGrabber;
         bool bNewFrame = false;
         bool bLearnBakground = true;
@@ -21,7 +23,7 @@ class Capture
         // this is the final output from capture processing
         ofxCvGrayscaleImage 	grayDiff;
 
-        Capture(ofVideoGrabber& g);
+        Capture(int deviceID, string deviceName, ofVideoGrabber& g);
         virtual ~Capture();
         void setup();
         void update();
@@ -35,12 +37,3 @@ class Capture
 
 
 #endif // CAPTURE_H
-
-struct GrabberDevice {
-    unsigned int id; // the device id
-    string name; // the device name string
-    Capture* device;
-
-    GrabberDevice(){};
-    GrabberDevice(int deviceID, string deviceName, Capture* dev){id = deviceID, name = deviceName, device = dev;}
-};
