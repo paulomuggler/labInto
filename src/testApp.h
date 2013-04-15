@@ -30,15 +30,11 @@ public:
     string sourcesPath = "sources";
     ofDirectory sourcesDir;
 
-    // image processing parameters
-    int 				threshold;
-    bool				bLearnBakground;
-
-    // display parameters
+    // source
     Source*			srcImage;
     int srcImgW, srcImgH;
 
-    ofImage maskImg, tgt;
+    ofImage maskImg;
 
     // this window displays only the final image
     Layer* out;

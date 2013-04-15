@@ -15,11 +15,9 @@ void testApp::setup()
     srcImage = new Source("", SRC_IMAGE);
     loadSourceImg();
 
-    out = new Layer(srcImage);
+    out = new Layer(srcImage, 1024, 768);
     out->setup();
     out->fltrFlashLight = capture;
-
-    threshold = 0;
 
     configure_windows();
 }
@@ -68,7 +66,6 @@ void testApp::draw()
     stringstream reportStr;
     reportStr << "bg subtraction and blob detection" << endl
               << "press ' ' to capture bg" << endl
-              << "threshold " << threshold << " (press: +/-)" << endl
               << ", fps: " << ofGetFrameRate() << endl
               << "VM: " << vm << "; RSS: " << rss << endl;
     ofDrawBitmapString(reportStr.str(), 660, 20);
@@ -137,8 +134,6 @@ void testApp::loadSourceImg()
     srcImgH = srcImage->height;
     maskImg.clear();
     maskImg.allocate(srcImgW, srcImgH, OF_IMAGE_GRAYSCALE);
-    tgt.clear();
-    tgt.allocate(srcImgW, srcImgH, OF_IMAGE_COLOR_ALPHA);
 }
 
 //--------------------------------------------------------------

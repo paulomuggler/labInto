@@ -20,7 +20,7 @@ public:
     // filters
     Capture*		fltrFlashLight;
 
-    Layer(Source* src);
+    Layer(Source* src, int w, int h);
     virtual ~Layer();
     void setup();
     void update();

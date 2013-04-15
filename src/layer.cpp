@@ -1,7 +1,9 @@
 #include "layer.h"
 
-Layer::Layer(Source* src)
-    :source(src)
+Layer::Layer(Source* src, int w, int h)
+    :source(src),
+    width(w),
+    height(h)
 {}
 
 Layer::~Layer() {}
@@ -9,7 +11,6 @@ Layer::~Layer() {}
 void Layer::setup()
 {
     //width = source->width, height = source->height;
-    width = 512, height = 512;
     mPixMask.allocate(width,height, 1);
     mPixOut.allocate(width, height, 4);
     //mTex.allocate(width, height, GL_RGBA, true);
