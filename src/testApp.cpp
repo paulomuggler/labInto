@@ -4,30 +4,17 @@
 //--------------------------------------------------------------
 void testApp::setup()
 {
-    scanDevices();
-
     load_source_files();
 
-//    vidGrabber.setVerbose(true);
-//    vidGrabber.setPixelFormat(OF_PIXELS_RGB);
-//    vidGrabber.setDesiredFrameRate(50);
-//    vidGrabber.initGrabber(320,240);
-
+    scanDevices();
     cout << capturesAvailable.size() << " captures available." << endl;
-    GrabberDevice gd = capturesAvailable.back();
-    cout << "selecting device " << gd.name << endl;
-    gd.device->setup();
-    vidGrabber = (gd.device->vidGrabber);
+    capture = capturesAvailable.back();
+    cout << "selecting device " << capture.name << endl;
+    capture.device->setup();
 
     loadSourceImg();
     configure_windows();
 
-    colorImg.allocate(320,240);
-    grayImage.allocate(320,240);
-    grayBg.allocate(320,240);
-    grayDiff.allocate(320,240);
-
-    bLearnBakground = true;
     threshold = 0;
 }
 
@@ -36,40 +23,16 @@ void testApp::update()
 {
     ofBackground(100,100,100);
 
-    vidGrabber.update();
-    bNewFrame = vidGrabber.isFrameNew();
+    capture.device->update();
+    bool bNewFrame = capture.device->vidGrabber.isFrameNew();
 
     if (bNewFrame)
     {
-        bNewFrame = false;
         if(sourceImgChanged)
         {
             loadSourceImg();
             sourceImgChanged = false;
         }
-
-        colorImg.setFromPixels(vidGrabber.getPixels(), 320,240);
-
-        grayImage = colorImg;
-        if (bLearnBakground == true)
-        {
-            grayBg = grayImage;
-            bLearnBakground = false;
-        }
-
-        // take the abs value of the difference between background and incoming and then threshold:
-        grayDiff.absDiff(grayBg, grayImage);
-        grayDiff.blur(21);
-        //grayDiff.threshold(threshold);
-        IplImage* cvImage = grayDiff.getCvImage();
-        //cvThreshold(cvImage, cvImage, threshold, 0, CV_THRESH_TOZERO);
-        cvErode(cvImage, cvImage, NULL, 1);
-        cvDilate(cvImage, cvImage, NULL, 1);
-        //grayDiff.contrastStretch();
-        //grayDiff.dilate_3x3();
-        //grayDiff.erode_3x3();
-        //grayDiff.blurGaussian(33);
-        //grayDiff.adaptiveThreshold(threshold, 0 ,false, true);
 
         maskTargetImage();
 
@@ -80,13 +43,14 @@ void testApp::update()
 void testApp::draw()
 {
 
+    Capture cap = *(capture.device);
     // draw the incoming, the grayscale, the bg and the thresholded difference
     int gW = 320, gH = 240, pad = 10;
 
-    drawImageOnGrid(colorImg, "color image", 0, 0, gW, gH, pad);
-    drawImageOnGrid(grayImage, "grayscale image", 0, 1, gW, gH, pad);
-    drawImageOnGrid(grayBg, "background image", 1, 0, gW, gH, pad);
-    drawImageOnGrid(grayDiff, "alpha mask image", 1, 1, gW, gH, pad);
+    drawImageOnGrid(cap.colorImg, "color image", 0, 0, gW, gH, pad);
+    drawImageOnGrid(cap.grayImage, "grayscale image", 0, 1, gW, gH, pad);
+    drawImageOnGrid(cap.grayBg, "background image", 1, 0, gW, gH, pad);
+    drawImageOnGrid(cap.grayDiff, "alpha mask image", 1, 1, gW, gH, pad);
     drawImageOnGrid(srcImage, "source image", 2, 0, gW, gH, pad);
 
     ofEnableAlphaBlending();
@@ -132,11 +96,10 @@ void testApp::maskTargetImage()
     tgt.setFromPixels(srcImage.getPixelsRef());
     tgt.setImageType(OF_IMAGE_COLOR_ALPHA);
 
-    grayDiff.getPixelsRef().resizeTo(maskImg.getPixelsRef(), OF_INTERPOLATE_BICUBIC);
+    capture.device->getAlphaMask(&(maskImg.getPixelsRef()));
     maskImg.reloadTexture();
 
     unsigned char * maskPixels = maskImg.getPixels();
-    unsigned char * srcPixels = srcImage.getPixels();
     unsigned char * destPixels = tgt.getPixels();
 
     int bpp = tgt.bpp / 8; //ofImage
@@ -220,7 +183,7 @@ void testApp::keyPressed(int key)
     switch (key)
     {
     case ' ':
-        bLearnBakground = true;
+        capture.device->learnBackground();
         break;
     case '+':
         threshold ++;
@@ -255,8 +218,8 @@ void testApp::scanDevices(){
 
     // last device is a duplicate, deallocate it
     GrabberDevice fb = capturesAvailable.back();
+    capturesAvailable.pop_back();
     delete &(fb.device->vidGrabber);
     delete fb.device;
-    capturesAvailable.pop_back();
 
 }

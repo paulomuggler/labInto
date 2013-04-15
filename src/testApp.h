@@ -20,12 +20,8 @@ public:
     // UI methods
     void keyPressed(int key);
 
-    void maskTargetImage();
-
-
     // video capture
-    ofVideoGrabber 		vidGrabber;
-    bool bNewFrame = false;
+    GrabberDevice capture;
 
     // source image files
     unsigned int fcursor = UINT_MAX/2;
@@ -40,22 +36,13 @@ public:
     // display parameters
     int srcImgW, srcImgH;
 
-    // ofxOpenCv image types for processing
-    ofxCvColorImage			colorImg;
-
-    ofxCvGrayscaleImage 	grayImage;
-    ofxCvGrayscaleImage 	grayBg;
-    ofxCvGrayscaleImage 	grayDiff;
-    ofImage maskImg; // this will be the same size as srcImage
-
-    ofImage tgt;
+    ofImage maskImg, tgt;
 
     // this window displays only the final image
     outputWindow* ow;
 
     vector<GrabberDevice> capturesAvailable;
     vector<GrabberDevice> capturesActive;
-    void scanDevices();
 
 
 private:
@@ -66,6 +53,8 @@ private:
     template <class T>
     void drawImageOnGrid(T img, string imgName, int i, int j, int gW, int gH, int pad);
     bool sourceImgChanged = false;
+    void maskTargetImage();
+    void scanDevices();
 
 };
 

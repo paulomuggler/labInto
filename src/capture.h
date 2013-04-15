@@ -26,6 +26,9 @@ class Capture
         void setup();
         void update();
         void learnBackground();
+
+        void getAlphaMask(ofPixels* dst);
+
     protected:
     private:
 };
@@ -38,5 +41,6 @@ struct GrabberDevice {
     string name; // the device name string
     Capture* device;
 
+    GrabberDevice(){};
     GrabberDevice(int deviceID, string deviceName, Capture* dev){id = deviceID, name = deviceName, device = dev;}
 };
