@@ -51,7 +51,7 @@ void testApp::draw()
     drawImageOnGrid(capture->grayImage, "grayscale image", 0, 1, gW, gH, pad);
     drawImageOnGrid(capture->grayBg, "background image", 1, 0, gW, gH, pad);
     drawImageOnGrid(capture->grayDiff, "alpha mask image", 1, 1, gW, gH, pad);
-    drawImageOnGrid(srcImage->srcImg, "source image", 2, 0, gW, gH, pad);
+    drawImageOnGrid(srcTex, "source image", 2, 0, gW, gH, pad);
 
     //out -> draw(670, 0, out->width, out->height);
 
@@ -134,6 +134,8 @@ void testApp::loadSourceImg()
     srcImgH = srcImage->height;
     maskImg.clear();
     maskImg.allocate(srcImgW, srcImgH, OF_IMAGE_GRAYSCALE);
+    srcTex.allocate(srcImage->srcImg.getPixelsRef());
+    srcTex.loadData(srcImage->srcImg.getPixelsRef());
 }
 
 //--------------------------------------------------------------

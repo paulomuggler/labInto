@@ -39,15 +39,12 @@ void Layer::draw()
 
 void Layer::draw(int x1, int y1, int x2, int y2)
 {
-    if(source->bNewFrame || fltrFlashLight->bNewFrame)
-    {
-        ofEnableAlphaBlending();
-        ofSetColor(0);
-        ofRect(x1, y1, x2, y2);
-        ofSetColor(255);
-        mTex.draw(x1, y1, x2, y2);
-        ofDisableAlphaBlending();
-    }
+    ofEnableAlphaBlending();
+    ofSetColor(0);
+    ofRect(x1, y1, x2, y2);
+    ofSetColor(255);
+    mTex.draw(x1, y1, x2, y2);
+    ofDisableAlphaBlending();
 }
 
 void Layer::getFrame(ofPixels* dst)

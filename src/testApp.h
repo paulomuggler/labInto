@@ -33,6 +33,7 @@ public:
     // source
     Source*			srcImage;
     int srcImgW, srcImgH;
+    ofTexture srcTex;
 
     ofImage maskImg;
 
