@@ -15,7 +15,12 @@ public:
     ofPixels          mPixMask;
     ofPixels          mPixOut;
     ofTexture         mTex;
+    ofTexture         maskTex;
     int width, height;
+
+    // display pipeline variables
+    ofFbo       fbo;
+    ofShader    shader;
 
     // filters
     Capture*		fltrFlashLight;
@@ -25,6 +30,8 @@ public:
     void setup();
     void update();
     void draw();
+
+
 
     void draw(int x1, int y1, int x2, int y2);
 

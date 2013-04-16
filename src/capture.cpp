@@ -68,3 +68,9 @@ void Capture::getAlphaMask(ofPixels* dst){
     //grayDiff.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_BICUBIC);
     grayDiff.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_NEAREST_NEIGHBOR);
 }
+
+void Capture::getAlphaMaskInverted(ofPixels* dst){
+    //grayDiff.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_BICUBIC);
+    grayDiff.invert();
+    grayDiff.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_NEAREST_NEIGHBOR);
+}

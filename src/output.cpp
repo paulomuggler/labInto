@@ -19,8 +19,8 @@ void outputWindow::update() {
 void outputWindow::draw(ofxFenster* f) {
     ofBackground(0);
     ofEnableAlphaBlending();
-//    outLayer->draw(0,0, f->getWidth(), f->getHeight());
-    out.draw(0,0, f->getWidth(), f->getHeight());
+    outLayer->draw(0,0, f->getWidth(), f->getHeight());
+    //out.draw(0,0, f->getWidth(), f->getHeight());
     ofDisableAlphaBlending();
 }
 

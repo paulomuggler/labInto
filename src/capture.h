@@ -33,6 +33,7 @@ class Capture
         void learnBackground();
 
         void getAlphaMask(ofPixels* dst);
+        void getAlphaMaskInverted(ofPixels* dst);
 
     protected:
     private:
