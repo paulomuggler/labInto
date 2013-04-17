@@ -50,7 +50,7 @@ void Source::update_image(){
     setup_image();
 }
 void Source::getFrame_image(ofPixels* dst){
-    //srcImg.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_BICUBIC);
-    srcImg.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_NEAREST_NEIGHBOR);
+    srcImg.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_BICUBIC);
+    //srcImg.getPixelsRef().resizeTo(*dst, OF_INTERPOLATE_NEAREST_NEIGHBOR);
     bNewFrame = false;
 }

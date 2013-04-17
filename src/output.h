@@ -9,6 +9,7 @@ class outputWindow: public ofxFensterListener
 
 public:
     outputWindow(Layer* lyr);
+    outputWindow();
     ~outputWindow();
 
     void setup();

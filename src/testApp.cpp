@@ -53,7 +53,7 @@ void testApp::draw()
     drawImageOnGrid(capture->grayDiff, "alpha mask image", 1, 1, gW, gH, pad);
     drawImageOnGrid(srcTex, "source image", 2, 0, gW, gH, pad);
 
-    out -> draw(800, 0, out->width, out->height);
+    //out -> draw(800, 0, out->width, out->height);
     //out -> draw(0, 0, 640, 480);
 
     out -> draw(330, 500, 320, 240);
@@ -105,7 +105,7 @@ void testApp::configure_windows()
 
     int winW=1024, winH=768;
 
-    ow = new outputWindow(out);
+    ow = new outputWindow();
 
     ofxFenster* win=ofxFensterManager::get()->createFenster(0, 0, winW, winH, OF_WINDOW);
 
