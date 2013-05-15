@@ -21,6 +21,7 @@ public:
     // display pipeline variables
     ofFbo       fbo;
     ofShader    shader;
+    float alphaGain = 1.0;
 
     // filters
     Capture*		fltrFlashLight;

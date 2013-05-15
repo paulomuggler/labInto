@@ -35,6 +35,7 @@ void Layer::setup()
     "#version 120\n \
     #extension GL_ARB_texture_rectangle : enable\n \
     \
+    uniform float alphaGain;\
     uniform sampler2DRect tex0;\
     uniform sampler2DRect maskTex;\
     \
@@ -42,9 +43,9 @@ void Layer::setup()
     vec2 pos = gl_TexCoord[0].st;\
     \
     vec3 src = texture2DRect(tex0, pos).rgb;\
-    float mask = texture2DRect(maskTex, pos).r;\
+    float mask = alphaGain*texture2DRect(maskTex, pos).g;\
     \
-    gl_FragColor = vec4( src , mask);\
+    gl_FragColor = vec4(src , mask);\
     }";
 
     shader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderProgram_alphaMask);
@@ -83,6 +84,7 @@ void Layer::update()
 
         shader.begin();
 
+        shader.setUniform1f("alphaGain", alphaGain);
         shader.setUniformTexture("maskTex", maskTex, 1 );
         mTex.draw(0,0);
 

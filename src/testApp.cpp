@@ -8,7 +8,7 @@ void testApp::setup()
 
     scanDevices();
     cout << capturesAvailable.size() << " captures available." << endl;
-    capture = (capturesAvailable.back());
+    capture = (capturesAvailable.front());
     cout << "selecting device " << capture->name << endl;
     capture->setup();
 
@@ -107,7 +107,7 @@ void testApp::configure_windows()
 
     ow = new outputWindow();
 
-    ofxFenster* win=ofxFensterManager::get()->createFenster(0, 0, winW, winH, OF_WINDOW);
+    win=ofxFensterManager::get()->createFenster(0, 0, winW, winH, OF_WINDOW);
 
     win->addListener(ow);
     win->setWindowTitle("output");
@@ -158,6 +158,20 @@ void testApp::keyPressed(int key)
         fcursor++;
         sourceImgChanged = true;
         break;
+    case '+':
+        out->alphaGain+=.1;
+        ow->outLayer->alphaGain+=.1;
+        ofLogNotice("alpha gain: "+ofToString(out->alphaGain));
+        break;
+    case '-':
+        out->alphaGain-=.1;
+        ow->outLayer->alphaGain-=.1;
+        ofLogNotice("alpha gain: "+ofToString(out->alphaGain));
+        break;
+    case 'f':
+        ofxFensterManager::get()->setActiveWindow(win);
+        ofxFensterManager::get()->toggleFullscreen();
+    break;
     }
 }
 

@@ -39,6 +39,7 @@ public:
 
     // this window displays only the final image
     Layer* out;
+    ofxFenster* win;
     outputWindow* ow;
 
     vector<Capture*> capturesAvailable;
