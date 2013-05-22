@@ -2,12 +2,10 @@
 
 #include "ofMain.h"
 #include "ofxOpenCv.h"
-#include "ofxFensterManager.h"
+#include "ofxSyphon.h"
 
-#include "output.h"
 #include "capture.h"
-#include "source.h"
-#include "layer.h"
+
 
 class testApp : public ofBaseApp
 {
@@ -24,36 +22,22 @@ public:
 
     // video capture
     Capture* capture;
-
-    // source image files
-    unsigned int fcursor = UINT_MAX/2;
-    string sourcesPath = "sources";
-    ofDirectory sourcesDir;
-
-    // source
-    Source*			srcImage;
-    int srcImgW, srcImgH;
-    ofTexture srcTex;
+    ofTexture maskTex;
+    ofPixels  maskPixels;
 
     ofImage maskImg;
 
-    // this window displays only the final image
-    Layer* out;
-    ofxFenster* win;
-    outputWindow* ow;
-
     vector<Capture*> capturesAvailable;
     vector<Capture*> capturesActive;
+    
+    ofxSyphonServer mainOutputSyphonServer;
+	ofxSyphonServer individualTextureSyphonServer;
 
 
 private:
     // helpers
-    void configure_windows();
-    void load_source_files();
-    void loadSourceImg();
     template <class T>
     void drawImageOnGrid(T img, string imgName, int i, int j, int gW, int gH, int pad);
-    bool sourceImgChanged = false;
     void scanDevices();
 
 };

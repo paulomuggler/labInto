@@ -4,4 +4,6 @@ make-run.sh
 bin/data/sources/*.jpg
 bin/libs/
 bin/labInto
+bin/labInto.app/*
+bin/labIntoDebug.app/*
 obj/

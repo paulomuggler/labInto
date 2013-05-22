@@ -4,22 +4,21 @@
 //--------------------------------------------------------------
 void testApp::setup()
 {
-    load_source_files();
 
     scanDevices();
     cout << capturesAvailable.size() << " captures available." << endl;
     capture = (capturesAvailable.front());
     cout << "selecting device " << capture->name << endl;
     capture->setup();
+    
+    maskPixels.allocate(capture->capW, capture->capH, 1);
+    maskTex.allocate(maskPixels);
+    
+    mainOutputSyphonServer.setName("Screen Output");
+	individualTextureSyphonServer.setName("Texture Output");
+    
+    ofSetFrameRate(60);
 
-    srcImage = new Source("", SRC_IMAGE);
-    loadSourceImg();
-
-    out = new Layer(srcImage, 1024, 768);
-    out->setup();
-    out->fltrFlashLight = capture;
-
-    configure_windows();
 }
 
 //--------------------------------------------------------------
@@ -30,12 +29,7 @@ void testApp::update()
 
     if (bNewFrame)
     {
-        out->update();
-        if(sourceImgChanged)
-        {
-            loadSourceImg();
-            sourceImgChanged = false;
-        }
+
     }
 }
 
@@ -51,14 +45,18 @@ void testApp::draw()
     drawImageOnGrid(capture->grayImage, "grayscale image", 0, 1, gW, gH, pad);
     drawImageOnGrid(capture->grayBg, "background image", 1, 0, gW, gH, pad);
     drawImageOnGrid(capture->grayDiff, "alpha mask image", 1, 1, gW, gH, pad);
-    drawImageOnGrid(srcTex, "source image", 2, 0, gW, gH, pad);
+    
+    // Syphon Stuff
+    
+    ofSetColor(255, 255, 255);
+    
+    ofEnableAlphaBlending();
+    
+	mainOutputSyphonServer.publishScreen();
+    capture->getAlphaMask(&maskPixels);
+    maskTex.loadData(maskPixels);
+    individualTextureSyphonServer.publishTexture(&maskTex);
 
-    //out -> draw(800, 0, out->width, out->height);
-    //out -> draw(0, 0, 640, 480);
-
-    out -> draw(330, 500, 320, 240);
-
-    //drawImageOnGrid(*out, "output image", 2, 1, gW, gH, pad);
 
     // finally, a report:
 
@@ -88,59 +86,6 @@ void testApp::drawImageOnGrid(T img, string imgName, int row, int col, int gW, i
     ofDrawBitmapString(reportStr.str(), i*gW+2*i*pad, j*gH+2*(j+1)*pad);
 }
 
-void testApp::configure_windows()
-{
-    // SETTING UP MULTIPLE WINDOWS WITH OFXFENSTER
-
-    //IF the following code is uncommented, all the following windows should be created on the second display, if there is one available
-
-    ofxDisplayList displays = ofxDisplayManager::get()->getDisplays();
-    ofxDisplay* disp = displays[0];
-
-    cout << "displays found: " << displays.size() << endl;
-
-    if(displays.size() > 1)
-        disp = displays[1];
-    ofxFensterManager::get()->setActiveDisplay(disp);
-
-    int winW=1024, winH=768;
-
-    ow = new outputWindow();
-
-    win=ofxFensterManager::get()->createFenster(0, 0, winW, winH, OF_WINDOW);
-
-    win->addListener(ow);
-    win->setWindowTitle("output");
-
-    //setup of fensterListener does not get called automatically yet
-    ow->setup();
-
-    // FINISH WINDOW SETUP
-}
-
-void testApp::load_source_files()
-{
-    //populate the sources directory object
-    sourcesDir.open(sourcesPath);
-    sourcesDir.listDir();
-
-    ofLogNotice("source files found at "+sourcesPath+":");
-    ofLogNotice(ofToString(sourcesDir.numFiles()));
-}
-
-void testApp::loadSourceImg()
-{
-    unsigned int f = fcursor%sourcesDir.numFiles();
-    srcImage->path = sourcesDir.getPath(f);
-    srcImage->update();
-    srcImgW = srcImage->width;
-    srcImgH = srcImage->height;
-    maskImg.clear();
-    maskImg.allocate(srcImgW, srcImgH, OF_IMAGE_GRAYSCALE);
-    srcTex.allocate(srcImage->srcImg.getPixelsRef());
-    srcTex.loadData(srcImage->srcImg.getPixelsRef());
-}
-
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)
 {
@@ -150,47 +95,16 @@ void testApp::keyPressed(int key)
     case ' ':
         capture->learnBackground();
         break;
-    case OF_KEY_LEFT:
-        fcursor--;
-        sourceImgChanged = true;
-        break;
-    case OF_KEY_RIGHT:
-        fcursor++;
-        sourceImgChanged = true;
-        break;
-    case '+':
-        out->alphaGain+=.1;
-        ow->outLayer->alphaGain+=.1;
-        ofLogNotice("alpha gain: "+ofToString(out->alphaGain));
-        break;
-    case '-':
-        out->alphaGain-=.1;
-        ow->outLayer->alphaGain-=.1;
-        ofLogNotice("alpha gain: "+ofToString(out->alphaGain));
-        break;
-    case 'f':
-        ofxFensterManager::get()->setActiveWindow(win);
-        ofxFensterManager::get()->toggleFullscreen();
-    break;
     }
 }
 
+
 void testApp::scanDevices(){
-    int i = 0,  deviceID = 0;;
+    int i = 0;
     do{
-        ofGstVideoGrabber* g = new ofGstVideoGrabber;
-        g->setDeviceID(i);
-        deviceID = g->deviceID;
         ofVideoGrabber* vg = (new ofVideoGrabber);
-        vg->setGrabber(ofPtr<ofGstVideoGrabber>(g));
-        Capture* c = new Capture(deviceID, g->camData.webcam_devices[deviceID].product_name, *vg);
+        Capture* c = new Capture(i, "capture"+ofToString(i), *vg);
         capturesAvailable.push_back(c);
-    }while(i++ <= deviceID);
-
-    // last device is a duplicate, deallocate it
-    Capture* c = capturesAvailable.back();
-    capturesAvailable.pop_back();
-    delete &(c->vidGrabber);
-    delete c;
-
+    }while(i++ <= 2);
 }
+ 

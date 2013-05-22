@@ -1,4 +1,0 @@
-ofxOpenCv
-ofxCv
-ofxFenster
-ofxUI
