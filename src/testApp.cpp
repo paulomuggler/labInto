@@ -41,10 +41,12 @@ void testApp::draw()
     // draw the incoming, the grayscale, the bg and the thresholded difference
     int gW = 320, gH = 240, pad = 10;
 
-    drawImageOnGrid(capture->colorImg, "color image", 0, 0, gW, gH, pad);
-    drawImageOnGrid(capture->grayImage, "grayscale image", 0, 1, gW, gH, pad);
-    drawImageOnGrid(capture->grayBg, "background image", 1, 0, gW, gH, pad);
-    drawImageOnGrid(capture->grayDiff, "alpha mask image", 1, 1, gW, gH, pad);
+    //drawImageOnGrid(capture->colorImg, "color image", 0, 0, gW, gH, pad);
+    //drawImageOnGrid(capture->grayImage, "grayscale image", 0, 1, gW, gH, pad);
+    //drawImageOnGrid(capture->grayBg, "background image", 1, 0, gW, gH, pad);
+    //drawImageOnGrid(capture->grayDiff, "alpha mask image", 1, 1, gW, gH, pad);
+    
+    drawImageOnGrid(capture->grayDiff, "alpha mask image", 0, 0, gW, gH, pad);
     
     // Syphon Stuff
     
@@ -65,11 +67,11 @@ void testApp::draw()
 
     ofSetHexColor(0xffffff);
     stringstream reportStr;
-    reportStr << "bg subtraction and blob detection" << endl
+    reportStr << "bg subtraction w/ syphon output" << endl
               << "press ' ' to capture bg" << endl
               << ", fps: " << ofGetFrameRate() << endl
               << "VM: " << vm << "; RSS: " << rss << endl;
-    ofDrawBitmapString(reportStr.str(), 660, 20);
+    ofDrawBitmapString(reportStr.str(), 10, 120);
 
 }
 
