@@ -27,11 +27,13 @@ public:
 
     // source image files
     unsigned int fcursor = UINT_MAX/2;
-    string sourcesPath = "sources";
+    string sourcesPath = "pictures";
     ofDirectory sourcesDir;
 
     // source
+    Source*			source;
     Source*			srcImage;
+    Source*			srcVideo;
     int srcImgW, srcImgH;
     ofTexture srcTex;
 
@@ -50,11 +52,12 @@ private:
     // helpers
     void configure_windows();
     void load_source_files();
-    void loadSourceImg();
+    void loadSource();
     template <class T>
     void drawImageOnGrid(T img, string imgName, int i, int j, int gW, int gH, int pad);
-    bool sourceImgChanged = false;
+    bool sourceChanged = false;
     void scanDevices();
 
 };
+
 

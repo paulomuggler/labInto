@@ -12,10 +12,11 @@ void testApp::setup()
     cout << "selecting device " << capture->name << endl;
     capture->setup();
 
-    srcImage = new Source("", SRC_IMAGE);
-    loadSourceImg();
+    source = new Source("", SRC_IMAGE);
+    //source = new Source("", SRC_VIDEO);
+    loadSource();
 
-    out = new Layer(srcImage, 1024, 768);
+    out = new Layer(source, 1024, 768);
     out->setup();
     out->fltrFlashLight = capture;
 
@@ -26,16 +27,18 @@ void testApp::setup()
 void testApp::update()
 {
     capture->update();
+    source->update();
     bool bNewFrame = capture->vidGrabber.isFrameNew();
 
     if (bNewFrame)
     {
         out->update();
-        if(sourceImgChanged)
-        {
-            loadSourceImg();
-            sourceImgChanged = false;
-        }
+    }
+
+    if(sourceChanged)
+    {
+        loadSource();
+        sourceChanged = false;
     }
 }
 
@@ -128,17 +131,17 @@ void testApp::load_source_files()
     ofLogNotice(ofToString(sourcesDir.numFiles()));
 }
 
-void testApp::loadSourceImg()
+void testApp::loadSource()
 {
     unsigned int f = fcursor%sourcesDir.numFiles();
-    srcImage->path = sourcesDir.getPath(f);
-    srcImage->update();
-    srcImgW = srcImage->width;
-    srcImgH = srcImage->height;
+    source->path = sourcesDir.getPath(f);
+    source->setup();
+    srcImgW = source->width;
+    srcImgH = source->height;
     maskImg.clear();
     maskImg.allocate(srcImgW, srcImgH, OF_IMAGE_GRAYSCALE);
-    srcTex.allocate(srcImage->srcImg.getPixelsRef());
-    srcTex.loadData(srcImage->srcImg.getPixelsRef());
+    srcTex.allocate(source->source->getPixelsRef());
+    srcTex.loadData(source->source->getPixelsRef());
 }
 
 //--------------------------------------------------------------
@@ -152,11 +155,11 @@ void testApp::keyPressed(int key)
         break;
     case OF_KEY_LEFT:
         fcursor--;
-        sourceImgChanged = true;
+        sourceChanged = true;
         break;
     case OF_KEY_RIGHT:
         fcursor++;
-        sourceImgChanged = true;
+        sourceChanged = true;
         break;
     case '+':
         out->alphaGain+=.1;

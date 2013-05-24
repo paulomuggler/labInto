@@ -20,8 +20,9 @@ public:
     // resource handling
     resourceType mtype;
     string path;
+    ofBaseHasPixels *source;
     ofImage         srcImg;
-    ofVideoGrabber  srcVideo;
+    ofVideoPlayer  srcVideo;
     bool bNewFrame = false;
     int width, height;
 
@@ -48,6 +49,10 @@ private:
     void setup_image();
     void update_image();
     void getFrame_image(ofPixels* dst);
+
+    void setup_video();
+    void update_video();
+    void getFrame_video(ofPixels* dst);
 };
 
 

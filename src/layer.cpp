@@ -60,11 +60,11 @@ void Layer::setup()
 
 void Layer::update()
 {
-    if(source->bNewFrame)
-    {
+   // if(source->bNewFrame)
+   // {
         source->getFrame(&mPixOut);
         mTex.loadData(mPixOut);
-    }
+   // }
 
     if(fltrFlashLight->bNewFrame)
     {
