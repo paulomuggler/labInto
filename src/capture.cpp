@@ -12,7 +12,7 @@ void Capture::setup(){
 
     capW = 320;
     capH = 240;
-    framerate = 30;
+    framerate = 120;
 
     vidGrabber.setVerbose(true);
     vidGrabber.setPixelFormat(OF_PIXELS_RGB);
@@ -45,12 +45,12 @@ void Capture::update(){
         }
 
         grayDiff.absDiff(grayBg, grayImage);
-        grayDiff.blur(21);
+        //grayDiff.blur(21);
         //grayDiff.threshold(threshold);
-        IplImage* cvImage = grayDiff.getCvImage();
+        //IplImage* cvImage = grayDiff.getCvImage();
         //cvThreshold(cvImage, cvImage, threshold, 0, CV_THRESH_TOZERO);
-        cvErode(cvImage, cvImage, NULL, 1);
-        cvDilate(cvImage, cvImage, NULL, 1);
+        //cvErode(cvImage, cvImage, NULL, 1);
+        //cvDilate(cvImage, cvImage, NULL, 1);
         //grayDiff.contrastStretch();
         //grayDiff.dilate_3x3();
         //grayDiff.erode_3x3();

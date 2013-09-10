@@ -14,10 +14,11 @@ void testApp::setup()
     maskPixels.allocate(capture->capW, capture->capH, 1);
     maskTex.allocate(maskPixels);
     
-    mainOutputSyphonServer.setName("Screen Output");
+    //mainOutputSyphonServer.setName("Screen Output");
 	individualTextureSyphonServer.setName("Texture Output");
     
-    ofSetFrameRate(60);
+    ofSetVerticalSync(true);
+    ofSetFrameRate(120);
 
 }
 
@@ -25,19 +26,14 @@ void testApp::setup()
 void testApp::update()
 {
     capture->update();
-    bool bNewFrame = capture->vidGrabber.isFrameNew();
 
-    if (bNewFrame)
-    {
-
-    }
 }
 
 //--------------------------------------------------------------
 void testApp::draw()
 {
 
-    ofBackground(100,100,100);
+    //ofBackground(100,100,100);
     // draw the incoming, the grayscale, the bg and the thresholded difference
     int gW = 320, gH = 240, pad = 10;
 
@@ -52,9 +48,9 @@ void testApp::draw()
     
     ofSetColor(255, 255, 255);
     
-    ofEnableAlphaBlending();
+    //ofEnableAlphaBlending();
     
-	mainOutputSyphonServer.publishScreen();
+	//mainOutputSyphonServer.publishScreen();
     capture->getAlphaMask(&maskPixels);
     maskTex.loadData(maskPixels);
     individualTextureSyphonServer.publishTexture(&maskTex);
