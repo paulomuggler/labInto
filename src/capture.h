@@ -17,6 +17,8 @@ class Capture
 
         //
         int capW, capH, framerate;
+        
+        int blurGain = -1;
 
         // ofxOpenCv image types for storing intermediate representations (useful for monitoring, etc.)
         ofxCvColorImage			colorImg;

@@ -45,7 +45,10 @@ void Capture::update(){
         }
 
         grayDiff.absDiff(grayBg, grayImage);
-        //grayDiff.blur(21);
+        
+        if(blurGain > 0){
+            grayDiff.blur(blurGain);
+        }
         //grayDiff.threshold(threshold);
         //IplImage* cvImage = grayDiff.getCvImage();
         //cvThreshold(cvImage, cvImage, threshold, 0, CV_THRESH_TOZERO);

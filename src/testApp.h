@@ -31,7 +31,7 @@ public:
     vector<Capture*> capturesActive;
     
     ofxSyphonServer mainOutputSyphonServer;
-	ofxSyphonServer individualTextureSyphonServer;
+	  ofxSyphonServer individualTextureSyphonServer;
 
 
 private:

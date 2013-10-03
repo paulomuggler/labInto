@@ -15,7 +15,7 @@ void testApp::setup()
     maskTex.allocate(maskPixels);
     
     //mainOutputSyphonServer.setName("Screen Output");
-	individualTextureSyphonServer.setName("Texture Output");
+	  individualTextureSyphonServer.setName("Texture Output");
     
     ofSetVerticalSync(true);
     ofSetFrameRate(120);
@@ -92,6 +92,12 @@ void testApp::keyPressed(int key)
     {
     case ' ':
         capture->learnBackground();
+        break;
+    case '+':
+        capture->blurGain+=2;
+        break;
+    case '-':
+        capture->blurGain-=2;
         break;
     }
 }
