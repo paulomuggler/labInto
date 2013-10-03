@@ -98,6 +98,9 @@ void testApp::keyPressed(int key)
         break;
     case '-':
         capture->blurGain-=2;
+        if(capture->blurGain <= 0){
+          capture->blurGain = -1;
+        }
         break;
     }
 }
